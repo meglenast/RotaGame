@@ -10,7 +10,7 @@
 
 const int MIN_INF = -1000;
 const int PLUS_INF = 1000;
-const unsigned MAX_DEPTH = 2;
+const unsigned MAX_DEPTH = 3;
 
 const char WHITE_SQUARE = 0xDB;
 const char BLACK_SQUARE = 0xFF;
@@ -20,7 +20,20 @@ typedef std::vector<Coordinates> POSSIBLE_MOVES_GRAPHS[3][3];
 struct State
 {
 	BOARD board;
-	Coordinates next_move;
+
+	void print()
+	{
+		for (size_t row = 0; row < MAX_SIZE; ++row)
+		{
+			for (size_t col = 0; col < MAX_SIZE; ++col)
+		
+			{
+				std::cout << board[row][col].symbol;
+			}
+			std::cout << std::endl;
+		}
+		std::cout << std::endl;
+	}
 };
 
 class Board
@@ -61,6 +74,7 @@ private:
 	bool threeInDiagonal(Colour)const;
 	bool threeOnEdge(Colour)const;
 	bool isAdjecentCell(size_t, size_t, size_t, size_t)const;
+	bool boardEmpty()const;
 };
 
 #endif

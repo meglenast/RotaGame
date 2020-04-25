@@ -8,18 +8,13 @@ int heuristicFunction(const BOARD& board_state)
     int TwoBlackOneEmpty = countArcs(board_state, EMPTY, BLACK);
     int ThreeBlack       = countArcs(board_state, BLACK, BLACK);
     int OneBlackTwoEmpty = countArcs(board_state, BLACK, EMPTY);
-    int result = ((2*(TwoWhiteOneEmpty + 3*ThreeWhite) + OneWhiteTwoEmpty) -
-                  (2 * (TwoBlackOneEmpty + 3*ThreeBlack) + OneBlackTwoEmpty));
-    return result;
+    return ((2*(TwoWhiteOneEmpty + 3*ThreeWhite) + OneWhiteTwoEmpty) -
+            (2 * (TwoBlackOneEmpty + 3*ThreeBlack) + OneBlackTwoEmpty));
 }
-
 
 size_t countArcs(const BOARD& board_state, Colour col_first, Colour col_second)
 {
-    
-    size_t counter = countLines(board_state, col_first, col_second) + countEdges(board_state, col_first, col_second) + countDiagonals(board_state, col_first, col_second);
-
-    return counter;
+    return (countLines(board_state, col_first, col_second) + countEdges(board_state, col_first, col_second) + countDiagonals(board_state, col_first, col_second));
 }
 
 size_t countLines(const BOARD& board_state, Colour col_first, Colour col_second)
@@ -52,7 +47,6 @@ size_t countLines(const BOARD& board_state, Colour col_first, Colour col_second)
 size_t countEdges(const BOARD& board_state, Colour col_first, Colour col_second)
 {
     size_t counter = 0;
-
     //checks upper left corner
     if (
         (board_state[1][0].colour == col_first  && board_state[0][0].colour == col_second && board_state[0][1].colour == col_second) ||
@@ -91,7 +85,6 @@ size_t countEdges(const BOARD& board_state, Colour col_first, Colour col_second)
 size_t countDiagonals(const BOARD& board_state, Colour col_first, Colour col_second)
 {
     size_t counter = 0;
-
     //checks main diagonal
     if (
         (board_state[0][0].colour == col_first  && board_state[1][1].colour == col_second && board_state[2][2].colour == col_second) ||

@@ -7,7 +7,6 @@ void Game::startGame()
 	int first = randomBit();
 	board.initBoard(first);
 
-
 	if (endOfGame(WHITE))	//checks if AI has won
 		return;
 	if (endOfGame(BLACK))	//checks if the player has won 
@@ -49,26 +48,21 @@ void Game::nextPlayerMove()
 	std::cout << "\n";
 
 	if (board.isEmpty(x_coord, y_coord))
-	{
 		board.setMove(x_coord, y_coord, BLACK);
-	}
 }
 
 //private:
 
-bool Game::endOfGame(Colour pl_col)const
+bool Game::endOfGame(Colour pl_col)
 {
 	if (board.finalState(pl_col))
 	{
 		if (pl_col == WHITE)
-		{
 			std::cout << "You're defeated!\n";
-		}
 		else
-		{
 			std::cout << "You've won the game!\n";
-		}
-		//printGameHistory();
+	
+		printGameHistory();
 		return true;
 	}
 	return false;
@@ -77,4 +71,16 @@ bool Game::endOfGame(Colour pl_col)const
 int Game::randomBit()const
 {
 	return  rand() % 2;
+}
+
+void Game::printGameHistory()
+{
+	clearConsole();
+	std::cout << "GAME HISTORY: " << std::endl;
+
+	while (!history.empty())
+	{
+		history.front().print();
+		history.pop();
+	}
 }

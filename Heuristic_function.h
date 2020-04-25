@@ -60,7 +60,6 @@ struct Position
 
 typedef Position BOARD[3][3];
 
-
 int heuristicFunction(const BOARD&);
 
 size_t countArcs(const BOARD& board_state, Colour col_first, Colour col_second);

@@ -14,8 +14,9 @@ public:
 	void  startGame();
 	void  nextPlayerMove();
 private:
-	bool endOfGame(Colour)const;
+	bool endOfGame(Colour);
 	int randomBit()const;
+	void printGameHistory();
 };
 
 #endif
