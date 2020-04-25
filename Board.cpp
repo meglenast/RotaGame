@@ -1,6 +1,5 @@
 #include "Board.h"
 
-
 Board::Board()
 {
     initMoveGraph();
@@ -81,7 +80,7 @@ void Board::printRow(size_t row_index)const
         std::cout << " ";
         printSemiRow(5, WHITE_SQUARE);
         std::cout << std::endl;
-        //
+
         std::cout << "1";
         //
         std::cout << WHITE_SQUARE << WHITE_SQUARE << rota_board[1][0].symbol << WHITE_SQUARE << WHITE_SQUARE;
@@ -170,7 +169,7 @@ void Board::getBestMove(std::queue<State>& history)
                         State curr;
                         copyCurrBoard(curr);
 
-                        int curr_value = miniMax(curr, 0, false);
+                        int curr_value = miniMax(curr, 0, false, MIN_INF, PLUS_INF);
 
                         rota_board[row_cnt][col_cnt].setCell(WHITE);
                         rota_board[next_x][next_y].setCell(EMPTY);
@@ -197,7 +196,7 @@ void Board::getBestMove(std::queue<State>& history)
     printBoard();
 }
 
-int Board::miniMax(State state, size_t depth, bool isMax/*, Colour curr_player/*, int& alpha, int& beta*/)
+int Board::miniMax(State state, size_t depth, bool isMax, int alpha, int beta)
 {
     int state_value = heuristicFunction(state.board);
 
@@ -222,21 +221,17 @@ int Board::miniMax(State state, size_t depth, bool isMax/*, Colour curr_player/*
                     for (size_t i = 0; i < moves[curr_row][curr_col].size(); ++i)
                     {
                         Coordinates next_move(moves[curr_row][curr_col][i].x_coord, moves[curr_row][curr_col][i].y_coord);
-
-                        //state.board[next_move.x_coord][next_move.y_coord].setCell(WHITE);
-                        //state.board[curr_row][curr_col].setCell(EMPTY);
-
                         //
                         State curr;
                         copyPrevState(state, curr);
                         curr.board[next_move.x_coord][next_move.y_coord].setCell(WHITE);
                         curr.board[curr_row][curr_col].setCell(EMPTY);
                         //
+                        best_score = std::max(best_score, miniMax(curr, depth + 1, !isMax, alpha, beta));
+                        alpha = std::max(alpha, best_score);
 
-                        //best_score = std::max(best_score, miniMax(state,depth + 1, !isMax));
-                        best_score = std::max(best_score, miniMax(curr, depth + 1, !isMax));
-                        //state.board[next_move.x_coord][next_move.y_coord].setCell(EMPTY);
-                        //state.board[curr_row][curr_col].setCell(WHITE);
+                        if (beta <= alpha)
+                            break;
                     }
                 }
             }
@@ -256,10 +251,6 @@ int Board::miniMax(State state, size_t depth, bool isMax/*, Colour curr_player/*
                     for (size_t i = 0; i < moves[curr_row][curr_col].size(); ++i)
                     {
                         Coordinates next_move(moves[curr_row][curr_col][i].x_coord, moves[curr_row][curr_col][i].y_coord);
-
-                        //state.board[next_move.x_coord][next_move.y_coord].setCell(BLACK);
-                        //state.board[curr_row][curr_col].setCell(EMPTY);
-
                         //
                         State curr;
                         copyPrevState(state, curr);
@@ -267,11 +258,11 @@ int Board::miniMax(State state, size_t depth, bool isMax/*, Colour curr_player/*
                         curr.board[next_move.x_coord][next_move.y_coord].setCell(BLACK);
                         curr.board[curr_row][curr_col].setCell(EMPTY);
                         //
+                        best_score = std::min(best_score, miniMax(curr, depth + 1, !isMax, alpha, beta));
+                        beta = std::min(beta, best_score);
 
-                        //best_score = std::min(best_score, miniMax(state,depth + 1, !isMax));
-                        best_score = std::min(best_score, miniMax(curr, depth + 1, !isMax));
-                        //state.board[next_move.x_coord][next_move.y_coord].setCell(EMPTY);
-                        //state.board[curr_row][curr_col].setCell(BLACK);
+                        if (beta <= alpha)
+                            break;
                     }
                 }
             }

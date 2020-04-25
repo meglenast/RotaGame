@@ -44,7 +44,7 @@ public:
 	void setMove(int, int, Colour);
 
 private:
-	int miniMax(State,size_t, bool);
+	int miniMax(State,size_t, bool, int, int);
 
 	void initAI();
 	void initPlayer();
