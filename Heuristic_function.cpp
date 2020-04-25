@@ -8,8 +8,8 @@ int heuristicFunction(const BOARD& board_state)
     int TwoBlackOneEmpty = countArcs(board_state, EMPTY, BLACK);
     int ThreeBlack       = countArcs(board_state, BLACK, BLACK);
     int OneBlackTwoEmpty = countArcs(board_state, BLACK, EMPTY);
-    int result = ((2*(TwoWhiteOneEmpty + 2*ThreeWhite) + OneWhiteTwoEmpty) -
-                  (2 * (TwoBlackOneEmpty + 2*ThreeBlack) + OneBlackTwoEmpty));
+    int result = ((2*(TwoWhiteOneEmpty + 3*ThreeWhite) + OneWhiteTwoEmpty) -
+                  (2 * (TwoBlackOneEmpty + 3*ThreeBlack) + OneBlackTwoEmpty));
     return result;
 }
 
@@ -69,7 +69,7 @@ size_t countEdges(const BOARD& board_state, Colour col_first, Colour col_second)
     {
         ++counter;
     }
-    //checks down left
+    //checks down left corner
     if (
         (board_state[1][0].colour == col_first  && board_state[2][0].colour == col_second && board_state[2][1].colour == col_second) ||
         (board_state[1][0].colour == col_second && board_state[2][0].colour == col_first  && board_state[2][1].colour == col_second) ||
@@ -113,7 +113,5 @@ size_t countDiagonals(const BOARD& board_state, Colour col_first, Colour col_sec
 
 bool invalidCoordinates(size_t x_coord, size_t y_coord)
 {
-    bool flag = (0 >= x_coord || x_coord >= 2 || 0 >= y_coord || y_coord >= 2);
-    return  !flag;
-//    return (0 >= x_coord || x_coord >= 2 || 0 >= y_coord || y_coord >= 2);
+    return (0 > x_coord || x_coord > 2 || 0 > y_coord || y_coord > 2);
 }

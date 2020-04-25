@@ -5,7 +5,6 @@
 
 void clearConsole();
 void pressAnyKeyToContinue();
-
 void printTitel();
 
 #endif

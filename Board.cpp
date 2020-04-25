@@ -15,6 +15,7 @@ void Board::initBoard(size_t first)
         for (size_t i = 0; i < 3; ++i)
         {
             initAI();
+            printBoard();
             initPlayer();
             printBoard();
             // clearConsole();
@@ -64,9 +65,9 @@ void Board::printRow(size_t row_index)const
 
         printSemiRow(2, BLACK_SQUARE);
         if (row_index == 0)
-            std::cout << WHITE_SQUARE << WHITE_SQUARE << rota_board[0][1].symbol << WHITE_SQUARE << WHITE_SQUARE /*<< std::endl*/;
+            std::cout << WHITE_SQUARE << WHITE_SQUARE << rota_board[0][1].symbol << WHITE_SQUARE << WHITE_SQUARE;
         else if (row_index == 4)
-            std::cout << WHITE_SQUARE << WHITE_SQUARE << rota_board[2][1].symbol << WHITE_SQUARE << WHITE_SQUARE /*<< std::endl*/;
+            std::cout << WHITE_SQUARE << WHITE_SQUARE << rota_board[2][1].symbol << WHITE_SQUARE << WHITE_SQUARE;
         printSemiRow(2, BLACK_SQUARE);
         std::cout << std::endl << " ";;
         printSemiRow(2, BLACK_SQUARE);
@@ -165,21 +166,11 @@ void Board::getBestMove(std::queue<State>& history)
 
                         int alpha_val = MIN_INF;
                         int beta_val = PLUS_INF;
-                        //
+                       
                         State curr;
+                        copyCurrBoard(curr);
 
-                        for (size_t i = 0; i < MAX_SIZE; ++i)
-                        {
-                            for (size_t j = 0; j < MAX_SIZE; ++j)
-                            {
-                                curr.board[i][j].setCell(rota_board[i][j].colour);
-                            }
-                        }
-
-
-                        //
-
-                        int curr_value = miniMax(curr, 0, false/*, WHITE/*, alpha_val, beta_val*/);
+                        int curr_value = miniMax(curr, 0, false);
 
                         rota_board[row_cnt][col_cnt].setCell(WHITE);
                         rota_board[next_x][next_y].setCell(EMPTY);
@@ -190,7 +181,6 @@ void Board::getBestMove(std::queue<State>& history)
                             bestMoveFrom.y_coord = col_cnt;
                             bestMoveTo.x_coord = next_x;
                             bestMoveTo.y_coord = next_y;
-
                             best_score = curr_value;
                         }
                     }
@@ -215,7 +205,7 @@ int Board::miniMax(State state, size_t depth, bool isMax/*, Colour curr_player/*
         return state_value;
     if (finalState(BLACK))
         return state_value;
-    if (depth == 2)
+    if (depth == MAX_DEPTH)
         return state_value;
 
 
@@ -233,13 +223,20 @@ int Board::miniMax(State state, size_t depth, bool isMax/*, Colour curr_player/*
                     {
                         Coordinates next_move(moves[curr_row][curr_col][i].x_coord, moves[curr_row][curr_col][i].y_coord);
 
-                        state.board[next_move.x_coord][next_move.y_coord].setCell(WHITE);
-                        state.board[curr_row][curr_col].setCell(EMPTY);
+                        //state.board[next_move.x_coord][next_move.y_coord].setCell(WHITE);
+                        //state.board[curr_row][curr_col].setCell(EMPTY);
 
-                        best_score = std::max(best_score, miniMax(state,depth + 1, !isMax));
+                        //
+                        State curr;
+                        copyPrevState(state, curr);
+                        curr.board[next_move.x_coord][next_move.y_coord].setCell(WHITE);
+                        curr.board[curr_row][curr_col].setCell(EMPTY);
+                        //
 
-                        state.board[next_move.x_coord][next_move.y_coord].setCell(EMPTY);
-                        state.board[curr_row][curr_col].setCell(WHITE);
+                        //best_score = std::max(best_score, miniMax(state,depth + 1, !isMax));
+                        best_score = std::max(best_score, miniMax(curr, depth + 1, !isMax));
+                        //state.board[next_move.x_coord][next_move.y_coord].setCell(EMPTY);
+                        //state.board[curr_row][curr_col].setCell(WHITE);
                     }
                 }
             }
@@ -260,13 +257,21 @@ int Board::miniMax(State state, size_t depth, bool isMax/*, Colour curr_player/*
                     {
                         Coordinates next_move(moves[curr_row][curr_col][i].x_coord, moves[curr_row][curr_col][i].y_coord);
 
-                        state.board[next_move.x_coord][next_move.y_coord].setCell(BLACK);
-                        state.board[curr_row][curr_col].setCell(EMPTY);
+                        //state.board[next_move.x_coord][next_move.y_coord].setCell(BLACK);
+                        //state.board[curr_row][curr_col].setCell(EMPTY);
 
-                        best_score = std::min(best_score, miniMax(state,depth + 1, !isMax));
+                        //
+                        State curr;
+                        copyPrevState(state, curr);
 
-                        state.board[next_move.x_coord][next_move.y_coord].setCell(EMPTY);
-                        state.board[curr_row][curr_col].setCell(BLACK);
+                        curr.board[next_move.x_coord][next_move.y_coord].setCell(BLACK);
+                        curr.board[curr_row][curr_col].setCell(EMPTY);
+                        //
+
+                        //best_score = std::min(best_score, miniMax(state,depth + 1, !isMax));
+                        best_score = std::min(best_score, miniMax(curr, depth + 1, !isMax));
+                        //state.board[next_move.x_coord][next_move.y_coord].setCell(EMPTY);
+                        //state.board[curr_row][curr_col].setCell(BLACK);
                     }
                 }
             }
@@ -399,19 +404,30 @@ void Board::pushPossibleMoves(size_t row, size_t col)
 
 void Board::initAI()
 {
-    int x_coord;
-    int y_coord;
-    while (true)
+    int best_x;
+    int best_y;
+    int best_value = MIN_INF;
+    for (size_t row = 0; row < MAX_SIZE; ++row)
     {
-        int x_coord = (rand() % 3) + 1;
-        int y_coord = (rand() % 3) + 1;
-
-        if (rota_board[x_coord][y_coord].colour == EMPTY)
+        for (size_t col = 0; col < MAX_SIZE; ++col)
         {
-            rota_board[x_coord][y_coord].setCell(WHITE);
-            return;
+            if (rota_board[row][col].colour == EMPTY)
+            {
+                rota_board[row][col].setCell(WHITE);
+
+                int val = heuristicFunction(rota_board);
+
+                if (val > best_value)
+                {
+                    best_value = val;
+                    best_x = row;
+                    best_y = col;
+                }
+                rota_board[row][col].setCell(EMPTY);
+            }
         }
     }
+    rota_board[best_x][best_y].setCell(WHITE);
 }
 
 void Board::initPlayer()
@@ -490,4 +506,24 @@ void Board::addBoardConfiguration(std::queue<State>& history)const
         }
     }
     history.push(curr);
+}
+void Board::copyCurrBoard(State& state)const
+{
+    for (size_t i = 0; i < MAX_SIZE; ++i)
+    {
+        for (size_t j = 0; j < MAX_SIZE; ++j)
+        {
+            state.board[i][j].setCell(rota_board[i][j].colour);
+        }
+    }
+}
+void Board::copyPrevState(const State& prev, State& curr)
+{
+    for (size_t row = 0; row < MAX_SIZE; ++row)
+    {
+        for (size_t col = 0; col < MAX_SIZE; ++col)
+        {
+            curr.board[row][col].setCell(prev.board[row][col].colour);
+        }
+    }
 }

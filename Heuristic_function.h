@@ -1,7 +1,7 @@
 #ifndef __HEUTISTIC_FUNCTION__HEADER__INCLUDED__
 #define __HEUTISTIC_FUNCTION__INCLUDED__
 
-
+const size_t MAX_SIZE = 3;
 
 enum Colour
 {
@@ -58,22 +58,10 @@ struct Position
 	}
 };
 
-
 typedef Position BOARD[3][3];
-const size_t MAX_SIZE = 3;
 
-/*
-struct eval_pair
-{
-	BOARD state;
-	int state_eval;
-};
-*/
-
-//functions:
 
 int heuristicFunction(const BOARD&);
-//CHECK DIAGONALS
 
 size_t countArcs(const BOARD& board_state, Colour col_first, Colour col_second);
 size_t countLines(const BOARD& board_state, Colour col_first, Colour col_second);

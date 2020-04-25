@@ -10,9 +10,8 @@ void Game::startGame()
 
 	if (endOfGame(WHITE))	//checks if AI has won
 		return;
-	if (endOfGame(BLACK))	//checks if the player have won 
+	if (endOfGame(BLACK))	//checks if the player has won 
 		return;
-
 	
 	while (true)
 	{
